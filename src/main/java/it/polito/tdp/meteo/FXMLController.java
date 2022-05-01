@@ -5,7 +5,12 @@
 package it.polito.tdp.meteo;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.meteo.model.Citta;
+import it.polito.tdp.meteo.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,6 +18,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 
 public class FXMLController {
+	
+	private Model model  = new Model();
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -21,7 +28,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxMese"
-    private ChoiceBox<?> boxMese; // Value injected by FXMLLoader
+    private ChoiceBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnUmidita"
     private Button btnUmidita; // Value injected by FXMLLoader
@@ -34,15 +41,40 @@ public class FXMLController {
 
     @FXML
     void doCalcolaSequenza(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	List<Citta> seq = new LinkedList<Citta>(model.trovaSequenza(boxMese.getValue()));
+    	
+    	for(Citta c:seq)
+    	{
+    		txtResult.appendText(c.getNome());
+    	}
+    	
 
     }
 
     @FXML
     void doCalcolaUmidita(ActionEvent event) {
+    	
+    	txtResult.setText(model.getUmiditaMediaMese(boxMese.getValue()).toString());
 
     }
 
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+    
+    
+    public void setModel(Model model) {
+		this.model = model;
+		
+		for(Integer m = 1; m<=12; m++)
+		{
+			boxMese.getItems().add(m);
+		}
+		
+		
+	}
+
+	@FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert boxMese != null : "fx:id=\"boxMese\" was not injected: check your FXML file 'Scene.fxml'.";
         assert btnUmidita != null : "fx:id=\"btnUmidita\" was not injected: check your FXML file 'Scene.fxml'.";
